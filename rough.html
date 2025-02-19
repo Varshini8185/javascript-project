@@ -1,0 +1,57 @@
+<div>
+  <h2 style="text-align: center; padding: 40px;">Recent Activity</h2>
+  <div class="search-bar">
+      <input type="text" id="search-input" placeholder="Search for a dish..." />
+      <button id="search-btn">🔍</button>
+  </div>
+  <div id="main_div"></div>
+
+  <script>
+      let main_div = document.getElementById("main_div");
+      let searchInput = document.getElementById("search-input");
+      let searchBtn = document.getElementById("search-btn");
+      let allReviews = []; // Store fetched data here
+
+      function displayReviews(reviews) {
+          main_div.innerHTML = ""; // Clear previous results
+          reviews.forEach((foodreview) => {
+              let card = document.createElement("div");
+              card.classList.add("card");
+
+              let poster = document.createElement("img");
+              poster.src = foodreview.poster;
+              poster.alt = foodreview.name;
+
+              let foodItem = document.createElement("h2");
+              foodItem.innerHTML = foodreview.foodItem;
+
+              let review = document.createElement("h3");
+              review.innerHTML = `Review: ${foodreview.review}`;
+
+              card.append(poster, foodItem, review);
+              main_div.append(card);
+          });
+      }
+
+      // Fetch data
+      fetch("https://67a9e99665ab088ea7e4f239.mockapi.io/reviews")
+          .then((response) => response.json())
+          .then((reviews) => {
+              allReviews = reviews;
+              displayReviews(allReviews); // Show all reviews initially
+          })
+          .catch((error) => console.error("Error fetching data:", error));
+
+      // Search functionality
+      function filterReviews() {
+          let query = searchInput.value.toLowerCase();
+          let filtered = allReviews.filter((review) =>
+              review.foodItem.toLowerCase().includes(query)
+          );
+          displayReviews(filtered);
+      }
+
+      searchInput.addEventListener("input", filterReviews);
+      searchBtn.addEventListener("click", filterReviews);
+  </script>
+</div>
